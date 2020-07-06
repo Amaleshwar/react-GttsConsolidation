@@ -1,0 +1,22 @@
+
+
+
+.login-wrapper{
+padding: 20px;
+}
+.login-wrapper>div{
+ margin: 5px;
+}
+tr{
+ text-align: left;   
+}
+
+.login-img-tag{
+ width: 100%;
+}
+.login{
+ border-collapse: initial;
+}
+.App-link {
+ color: #61dafb;
+}

@@ -1,11 +1,15 @@
 import React from 'react';
 import logo from './logo.svg';
-import './App.css';
+import './GTTS.css';
 import axios from 'axios';
 import { Multiselect } from 'multiselect-react-dropdown';
-import Sheetjs from './Sheetjs.js'; 
+
 import XLSX from 'xlsx';
 import Switch from "react-switch";
+
+
+import ExcelJS from'exceljs'
+import FileSaver  from'file-saver';
 // var json =[{
     
 // "SNO" : 1,
@@ -43,7 +47,7 @@ var fs = require('fs');
 
 
 
-  class App extends React.Component  {
+  class GTTS extends React.Component  {
     constructor(props) {
       super(props);
       this.state = {  jsondata: [],
@@ -59,8 +63,9 @@ var fs = require('fs');
         selected:null,
         activityname:'',
         empname:'',
-        employeelist:   ['amal','vamsi','subhaga']   ,   
-        activitylist:   ['activity1','activity2','activity3']   , 
+        employeelist:    this.props.employeelist, 
+        username:  this.props.username,
+        activitylist:  this.props.activitieslist, // ['activity1','activity2','activity3']   , 
         holidaystoggle: false,  
         filename:'',
         datatosheetjs:[],
@@ -79,6 +84,7 @@ var fs = require('fs');
         user_weekdata_keys:[],
         slectedworkingdays:[],
         selectedweekends:[],
+        presentmonthname:'',
        }
 
        this.style={ chips: { background: "red" }, searchBox: { border: "none", "border-bottom": "1px solid blue", "border-radius": "0px" }}
@@ -88,6 +94,9 @@ var fs = require('fs');
     
 
     componentDidMount(){
+      const monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
       var empnames=this.state.employeelist;
       var  date = new Date();
       var   persentYear = date.getFullYear();
@@ -104,7 +113,7 @@ var fs = require('fs');
       console.log("res",weekends);
       var weekdays = this.getWeekdaysInMonth(persentYear,persentMonth,numDays);
       console.log("total working days: ",weekdays);
-  
+      var presentmonthname =monthNames[persentMonth];
 var filename = persentYear+''+(persentMonth+1);
 console.log(filename)
 
@@ -225,12 +234,12 @@ var presentweekno=0;
        console.log("weekends in present week :",presentweekends,weekends)
      var timesheetheader = Object.keys(result.timesheet[0]);
    //  console.log(" before timesheet header : ",timesheetheader)
-     timesheetheader.map((h,i)=>{ if(h.startsWith("day")){ timesheetheader[i]= h.slice(3, 5)}  })
-    // console.log(" after timesheetheader : ",timesheetheader)
+     timesheetheader.map((h,i)=>{ if(h.startsWith("day")){ timesheetheader[i]= parseInt(h.slice(3, 5)) }  })
+     console.log(" after timesheetheader : ",timesheetheader)
 
     var leavesheader = Object.keys(result.leaves[0]);
 
-        this.setState({timesheetheader:timesheetheader,leavesheader:leavesheader,weekdays:weekdays,weekends:weekends,weeks:weeks,weektext:weektext,filename:filename,jsondata:result,leavesjsondata:result.leaves,timesheetjsondata:result.timesheet,timesheet:timesheet,presentweek:presentweek,presentweektext:presentweektext,presentweekno:presentweekno});
+        this.setState({presentmonthname:presentmonthname,timesheetheader:timesheetheader,leavesheader:leavesheader,weekdays:weekdays,weekends:weekends,weeks:weeks,weektext:weektext,filename:filename,jsondata:result,leavesjsondata:result.leaves,timesheetjsondata:result.timesheet,timesheet:timesheet,presentweek:presentweek,presentweektext:presentweektext,presentweekno:presentweekno});
         //console.log("options : ",options)
         this.jsontoarrayofarray(); //to sonvert json data to array of arrays to send to sheetjs
       })
@@ -348,17 +357,17 @@ onactivityselect(e){
   }
 }
 
-onnameselect(e){ 
+// onnameselect(e){ 
   
-  if(e.target.value==='Select User'){
-    this.setState({errormsg:'Please Select User',inptselectweek:true,inptselectactivity:true,btnadd:true});
-    document.getElementById('getweek').value='Select Week';
-   document.getElementById('getactivity').value='Select Activity';
-  }else{
-  console.log("selected EMP: ",e.target.value)
-  this.setState({inptselectweek:false,errormsg:'',});
-  }
-}
+//   if(e.target.value==='Select User'){
+//     this.setState({errormsg:'Please Select User',inptselectweek:true,inptselectactivity:true,btnadd:true});
+//     document.getElementById('getweek').value='Select Week';
+//    document.getElementById('getactivity').value='Select Activity';
+//   }else{
+//   console.log("selected EMP: ",e.target.value)
+//   this.setState({inptselectweek:false,errormsg:'',});
+//   }
+// }
 onweekselect(e){
   if(e.target.value==='Select Week'){
     this.setState({errormsg:'Please Select week',inptselectactivity:true,btnadd:true});
@@ -494,7 +503,7 @@ updatetojson = function(e){
             break;
           }
       }
-      if(holiday_type=== undefined){
+      if(holiday_type=== undefined && this.state.holidaystoggle === true){
         alert("Choose Holiday Type and save again!")
           console.log("undefined",undefined); 
           return; 
@@ -637,7 +646,7 @@ savetofile(e){
       errormsg:'',
       });
 
-           document.getElementById('getemp').value='Select User';   
+  
       document.getElementById('getweek').value='Select Week';
       document.getElementById('getactivity').value='Select Activity';
  //  }
@@ -674,7 +683,7 @@ jsontoarrayofarray(){
   answer.push(this.state.timesheetheader)
   var temp  = this.state.timesheetjsondata.map(el=>  Object.values(el)  )
   temp.map(el=>  answer.push(el) )
-  var emptyrow = ["","",""]
+  var emptyrow = ["--","--","--"]
   answer.push(emptyrow);
   answer.push(emptyrow);
   answer.push(emptyrow);
@@ -771,31 +780,114 @@ tableinptchange(e,id,totalwrkhrs){
 exportFile() {
   /* convert state to workbook */
   this.jsontoarrayofarray(); //to sonvert json data to array of arrays to send to sheetjs
-  const ws = XLSX.utils.aoa_to_sheet(this.state.datatosheetjs);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "SheetJS");
+  var wb = new ExcelJS.Workbook();
+  const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+
+  var ws = wb.addWorksheet("My worksheet" , {views: [{showGridLines:true}]});
+  ws.addRows(this.state.datatosheetjs);
+  // const ws = XLSX.utils.aoa_to_sheet(this.state.datatosheetjs);
+  // const wb = XLSX.utils.book_new();
+  // XLSX.utils.book_append_sheet(wb, ws, "SheetJS");
+  var borderStyles = {
+    top: { style: "thin" },
+    left: { style: "thin" },
+    bottom: { style: "thin" },
+    right: { style: "thin" }
+  };
+  ws.getRow(2).font = {bold:true};
+  ws.getRow(this.state.timesheetjsondata.length+6).font = {bold:true};
+
+  ws.eachRow( function(row, rowNumber) {
+    row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
+      if (cell.value === '--') {
+         cell.value = '';
+        }
+        else if (cell.value === 'H'||cell.value === 'F'||cell.value === 'L'||cell.value === 'O') {
+          cell.border = borderStyles;
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFFF00' },
+            bgColor: { argb: 'FFFF00' }
+          };
+          }   
+        else{   
+      cell.border = borderStyles;}
+    });
+  });
+  
+  var col=  ws.columns[9].letter;//column letter 
+  ws.eachRow( function(row, rowNumber) {
+   var ref=  col+rowNumber;
+         if(row.worksheet.getCell(ref).value === 'valid'){  row.worksheet.getCell(ref).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: '008000' },
+          bgColor: { argb: '008000' }
+        };  }
+         if(row.worksheet.getCell(ref).value === 'invalid'){  row.worksheet.getCell(ref).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FF0000' },
+          bgColor: { argb: 'FF0000' }
+        }; 
+   }
+   
+  });
+  //to add red color to weekend 
+      var weekendcolor = [];
+      this.state.timesheetheader.map((header,index)=>{ 
+          if(this.state.weekends.indexOf(header) >=0){
+                  weekendcolor.push(index);
+          }
+      });
+      console.log("weekendcolor",weekendcolor)
+      weekendcolor.map((wkend)=>{
+
+        var col=  ws.columns[wkend].letter;//column letter 
+        ws.eachRow( function(row, rowNumber) {
+         var ref=  col+rowNumber;
+               if(row.worksheet.getCell(ref).value === 0){  row.worksheet.getCell(ref).fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FF0000' },
+                bgColor: { argb: 'FF0000' }
+              }; 
+         }
+         
+        });
+      })
+  //end 
   /* generate XLSX file and send to client */
-  XLSX.writeFile(wb, "sheetjs.xlsx")
+  wb.xlsx.writeBuffer().then(data=> {
+    const blob = new Blob([data], { type:fileType }); 
+    FileSaver.saveAs(blob, "GttsConsolidation.xlsx");
+         });
+  /* generate XLSX file and send to client */
+  //XLSX.writeFile(wb, "sheetjs.xlsx")
 };
 
  
       render(){
-        
+        console.log("this.props.employeelist",this.props.employeelist);
+        console.log("this.props.username",this.props.username)
   
     return (
     <div className="App">
 
-              <header className="App-header">
+              {/* <header className="App-header">
                 <img src={logo} className="App-logo" alt="logo" />
-                <h2 className="header-Text">  GTTS Consolidation <br/></h2>  
-              </header>
+                <h2 className="header-Text">  GTTS Consolidation  <br/></h2>  
+                <img src={logo} className="App-logo" alt="logo" />
+              </header> */}
+              <h4 >Present Month : {this.state.presentmonthname}  </h4>
               <div id="div_fillsheet">
 
-              <select id="getemp" className="dropdown__select" onChange={(e)=>this.onnameselect(e)} >
-              <option class="placeholder">Select User</option>
-                  { this.state.employeelist.map((emp,index)=>  <option className="select-option" value={emp}>{emp}</option> )}
+              <select id="getemp" className="dropdown__select" >
+              <option class="placeholder">{this.props.username}</option>
+                  {/* { this.state.employeelist.map((emp,index)=>  <option className="select-option" value={emp}>{emp}</option> )} */}
               </select>
-              <select id="getweek" className="dropdown__select" onChange={(e)=>this.onweekselect(e)} disabled={this.state.inptselectweek} >
+              <select id="getweek" className="dropdown__select" onChange={(e)=>this.onweekselect(e)}  >
               <option class="placeholder">Select Week</option>
                   { this.state.weektext.map((week,index)=>  <option className="select-option" value={week}>{week}</option> )}
               </select>
@@ -842,7 +934,7 @@ exportFile() {
                     chips: { color: 'black' },
                   optionContainer: {   border: '2px solid',width:'300px'}, 
                   searchBox: { border: "none", "borderBottom": "1px solid blue", "borderRadius": "0px",width:'300px' }}}
-                  //  disablePreSelectedValues={true}
+                    disablePreSelectedValues={true}
               />
                           </div>
            }
@@ -850,7 +942,7 @@ exportFile() {
               {/* <input type="text" id="activityname" placeholder="enter Activity name" onChange={(e)=>this.changeactivityname(e)} /> */}
                
               
-               <tr><span style={{color:"red"}}> {this.state.errormsg}</span></tr>
+            {this.state.errormsg &&   <span className="alert alert-danger" role="alert" > {this.state.errormsg}</span>}
                
  
                
@@ -865,7 +957,7 @@ exportFile() {
                 <table class="table w-auto">
                   <thead class="thead-dark">
                      <tr>                   
-                      <th>{document.getElementById('getemp').value}</th>
+                      <th>Employee</th>{/* <th>{document.getElementById('getemp').value}</th> */}
                       <th>{`Week ${this.state.selectedweekno} TaskName`}</th>
                       <th>{`Week ${this.state.selectedweekno} Totalhours`}</th>
                      {this.state.slectedworkingdays.map((workingday)=>{ return    <th>{workingday.id}</th>  })} 
@@ -904,6 +996,7 @@ exportFile() {
   
                     </tbody>
   </table>
+  <div class="info"><b>Note:</b> Enter <b>H</b> for Holidays, <b>L</b> for Leaves, <b>O</b> for Optional Holiday, <b>F</b> for Forlough. </div>
 
   <button type="button" className=" btn btn-dark" onClick={(e)=>this.savetofile(e)}>Submit</button>
 
@@ -912,43 +1005,12 @@ exportFile() {
 
   
       }
-
+ 
           
     </div>
   );
     }
 }
 
-export default App;
+export default GTTS;
 
-
-
-
-
-// <Multiselect 
-// options={this.state.employeelist} 
-// isObject={false}        
-// closeOnSelect={false}       
-// singleSelect
-// onSelect={(selectedItem)=>this.onnameselect(selectedItem)}
-// avoidHighlightFirstOption
-// placeholder="Select Name"
-// style={ { chips: { color: 'black' },
-// optionContainer: {   border: '2px solid',width:'300px'}, 
-// searchBox: { border: "none", "border-bottom": "1px solid blue", "border-radius": "0px",width:'300px' }}}
-// />
-
-
-{/* <div className="form-group col-lg-4">
-<label>Enter the ID:</label>
-<input type='text' name="id" onChange={(e)=>this.changeid(e)} className="form-control" /> 
-</div>
-<div className="form-group col-lg-4">
-<label>Enter Name:</label>
-<input type='text' name="fname" onChange={(e)=>this.changefname(e)} className="form-control" /> 
-</div>
-<div className="form-group mx-4">
-<button type='submit'  className="btn btn-primary" onSubmit={(e)=>this.adddepartment(e)} >Add Department </button>
-</div> */}
-
-// return <td> <input type='text' name={`day${workingday.id}`} id={`day${workingday.id}`}  min="0" max="8"onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() }  defaultValue={user[`day${workingday.id}`]} className="form-control" onChange={(e)=>this.tableinptchange(e,`day${workingday.id}`)} /> 

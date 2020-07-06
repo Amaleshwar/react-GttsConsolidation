@@ -36,60 +36,20 @@
 .table{
   outline-style: auto;
 }
-
-
-/* buttons  */
-.holidays,.noholidays {
-  box-shadow: none;
-  padding: 4px 10px;
-  text-shadow: none;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    font-size: 13px;
-    border: none;
-    outline:none;
-    white-space: nowrap;
-}
-.holidays:focus,.noholidays:focus {outline:0;}
-
-/*  select dropdown */
-
-
-
-.dropdown__select {
-  border-radius: 2px;
-  border: 2px solid rgba(46, 46, 46, 0.4);
-  box-sizing: border-box;
-  font-family: inherit;
-  font-size: 16px;
-  height: 40px;
-  margin: 4px ;
-  padding: 0 27px 0 10px; 
-  user-select: none;
-  cursor: pointer;
-  text-overflow: ellipsis;
-  outline: none;
-  background: white;
-  appearance: none;
+.Logout{
+  right: 4%;
+  position: absolute;
+  margin: 5px;
 }
 
-.tooltip-wrapper .btn[disabled] {
-  /* don't let button block mouse events from reaching wrapper */
-  pointer-events: none;
-}
+.App-login-body{
+  /* display: flex;
+flex-direction: column; */
+color: white;
+/* flex: 1;
+flex-wrap:wrap; */
+margin: 10px;
+display: inline-block;
+background-color: white;
 
-.tooltip-wrapper.disabled {
-  /* OPTIONAL pointer-events setting above blocks cursor setting, so set it here */
-  cursor: not-allowed;
-}
-
-#div_fillsheet, #div_holiday{
-  padding: 5px;
-}
-.info {
-  background-color: #e7f3fe;
-  border-left: 6px solid #2196F3;
 }
