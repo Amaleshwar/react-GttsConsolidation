@@ -137,7 +137,23 @@ console.log(content)
 
 
 });
+app.post('/addEmployee', function (req, res) {
 
+  let filename = req.body.filename.trim();
+  let jsondata = req.body.jsondata.trim();
+  var dropoffLocation = '/Files/';
+  var filePath = __dirname + dropoffLocation + filename + '.json';
+
+fs.writeFileSync(filePath,jsondata );
+
+var file_content = fs.readFileSync(filePath);
+var content = JSON.parse(file_content);
+console.log(content)
+
+  res.send(filePath);
+
+
+});
 // edite on 7/2/2020 --- adding authentication
 app.post('/getempdata', function (req, res) {
 
