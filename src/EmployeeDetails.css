@@ -1,0 +1,141 @@
+.App1 {
+    text-align: center;
+  }
+  
+  
+  
+  .headerApp {
+    /* background-color: #282c34; */
+    background-color:white;
+    min-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: calc(10px + 2vmin);
+    color: black;
+  }
+  
+  
+  .containerApp {
+    
+    border: 2px solid white;
+    width:1200px;
+    height: 500px;
+  
+  }
+  
+  
+  .ContainerDiv{
+  
+    
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 10px auto;
+    
+  
+   
+  
+  
+  
+  }
+  
+  .employeeconatiner{
+  
+    width: 400px;
+    height:200px;
+    margin: 10px auto;
+    border: 2px solid #ddd;
+    box-shadow: 1px 3px 5px rgba(0,0,0,0.05);
+    border-radius: 10px;
+    overflow-y: scroll;
+    font-size: small;
+    
+  
+  }
+  
+  .Hold{
+  
+    width: 400px;
+    height:150px;
+    margin: 10px auto;
+    border: 2px solid #ddd;
+    box-shadow: 1px 3px 5px rgba(0,0,0,0.05);
+    border-radius: 10px;
+    overflow-y: scroll;
+    font-size: small;
+  
+  }
+  
+  .Queue{
+  
+    width: 500px;
+    height:170px;
+    margin: 10px auto;
+    border: 2px solid #ddd;
+    box-shadow: 1px 3px 5px rgba(0,0,0,0.05);
+    border-radius: 10px;
+    overflow-y: scroll;
+    font-size: small;
+  
+  }
+  
+  .Queue::-webkit-scrollbar{
+    display: none;
+  }
+  
+  .Queue{
+    -ms-overflow-style: none;
+  }
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .employeeconatiner::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbar for IE and Edge */
+  .employeeconatiner{
+    -ms-overflow-style: none;
+  }
+  .employeedetailes{
+  
+   
+    display:flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow: auto;
+    font-size: small;
+    
+  
+  }
+  
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f2f2f2 ;
+  }
+  
+  .button1{
+    background-color:  #e7e7e7;
+    border: none;
+    color: black;
+    padding: 0px 20px;
+    text-align: center;
+    text-decoration: center;
+    display:inline-block;
+    font-size: 16px;
+    cursor:pointer;
+    margin: 3px;
+   border-radius: 4px;
+   } 
