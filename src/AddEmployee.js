@@ -125,16 +125,16 @@ import axios from 'axios';
 
                   <div> <h5>add</h5>
                      <table>
-                          <tr>  <td> <label><b>Employee Id :</b></label></td> <td>  <input type="text" id="EmpId"/>       </td>
-                            <td> <label><b>First Name :</b></label></td> <td>  <input type="text" id="EmpFirstName"/></td></tr>
-                          <tr>  <td> <label><b>Last Name :</b></label></td> <td>  <input type="text" id="EmpLastName"/></td>
-                            <td> <label><b>Mail id :</b></label></td><td>  <input type="text" id="EmpMail"/>  </td></tr> 
-                          <tr>  <td> <label><b>Contact Number :</b></label></td><td>  <input type="text" id="contact"/> </td>
-                            <td> <label><b>Location :</b></label></td><td>  <input type="text" id="Location"/>  </td></tr>
-                          <tr>  <td> <label><b>Designation :</b></label></td><td>  <input type="text" id="Designation"/>  </td>
-                            <td> <label><b>Manager :</b></label></td><td>  <input type="text" id="Manager" value="Suresh" disabled={true}/>  </td></tr> 
-                          <tr>  <td> <label><b>Last working day :</b></label></td><td>  <input type="text" id="LWD"/> </td>
-                          <td> <label><b>Date of joining :</b></label></td><td>  <input type="text" id="DOJ"/>  </td></tr>
+                          <tr>  <td> <label><b>Employee Id :</b></label></td> <td>  <input type="text" id="EmpId" required/>       </td>
+                            <td> <label><b>First Name :</b></label></td> <td>  <input type="text" id="EmpFirstName" required/></td></tr>
+                          <tr>  <td> <label><b>Last Name :</b></label></td> <td>  <input type="text" id="EmpLastName" required/></td>
+                            <td> <label><b>Mail id :</b></label></td><td>  <input type="text" id="EmpMail" required/>  </td></tr> 
+                          <tr>  <td> <label><b>Contact Number :</b></label></td><td>  <input type="text" id="contact" required/> </td>
+                            <td> <label><b>Location :</b></label></td><td>  <input type="text" id="Location" required/>  </td></tr>
+                          <tr>  <td> <label><b>Designation :</b></label></td><td>  <input type="text" id="Designation" required/>  </td>
+                            <td> <label><b>Manager :</b></label></td><td>  <input type="text" id="Manager" value="Suresh"required disabled={true}/>  </td></tr> 
+                          <tr>  <td> <label><b>Last working day :</b></label></td><td>  <input type="date" id="LWD" required/> </td>
+                          <td> <label><b>Date of joining :</b></label></td><td>  <input type="date" id="DOJ" required/>  </td></tr>
                       </table>
                       <button className="empaddsubmit btn btn-primary" onClick={(e)=>this.addemployee(e)}  >Submit</button>
                  </div>

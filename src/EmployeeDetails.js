@@ -31,35 +31,6 @@ class Employeedetails extends Component{
 
 }
 
-// async componentDidMount(){
-//    console.log("Emp called");
-   
-//   let EmpDETAILS = await axios.get('http://localhost:4000/empdetails')
-//   console.log(EmpDETAILS.data);
-//   let queue = await axios.get('http://localhost:4000/Addqueue');
-//   console.log(queue.data);
-//   this.setState({Empdetailslist : EmpDETAILS.data,displayQueue:queue.data,quedisp:true});
-//   console.log(this.state.Empdetailslist);
-
-//   // Interval = setInterval(() => {
-
-//   //   this.handleQueue()
-//   //   console.log("called");
-    
-     
-//   //  }, 5000);
-  
-
-//  }
-
-//  async handleQueue ( ){
-//   console.log("queue");
-//   let queue = await axios.get('http://localhost:4000/Addqueue');
-//   this.setState({dummiestate: "" ,displayQueue:queue.data });
-//   console.log(queue);
-  
-// }
-
  async handleSearch(empid) {
   console.log(empid);
   
@@ -216,7 +187,7 @@ render(){
          <div >
                 <span id="div"></span>
               
-                <input  type="text" id="input" placeholder="Search" className="mr-sm-2" />
+                <input  type="text" id="input" placeholder="Enter ID" className="mr-sm-2" />
                 <button  variant="outline-success sm" onClick ={(e) => this.handleSearch(document.getElementById("input").value)}>Search</button>
                
           </div> 

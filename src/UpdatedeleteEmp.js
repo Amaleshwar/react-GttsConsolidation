@@ -128,7 +128,7 @@ import axios from 'axios';
                         return <table key={index}>
                        
                       {this.state.inptidlist.map((id,index)=>{
-                        return  <tr>  <td> <label><b>{this.state.labellist[index]}</b></label></td> <td>  <input type="text" id={id}  value={emp[id]} onChange={(e)=>this.handleemployee(e,id)}/></td></tr>
+                        return  <tr>  <td> <label><b>{this.state.labellist[index]}</b></label></td> <td>  <input type="text" id={id} required value={emp[id]} onChange={(e)=>this.handleemployee(e,id)}/></td></tr>
                       })}
                     </table>
                

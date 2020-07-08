@@ -57,7 +57,7 @@ import Activity from './Activity.js';
                 <button className="update btn btn-secondary" onClick={(e)=>this.handleupdate(e)}  >Update/Delete</button>
                 <button className="viewall btn btn-secondary" onClick={(e)=>this.handleview(e)}  >View All</button>
                 <button className="viewall btn btn-secondary" onClick={(e)=>this.handleactivity(e)}  >Activity</button>
-
+    <div className="updatecomponets ">
                 {this.state.showadd && 
                   <AddEmployee />
                 }
@@ -70,7 +70,7 @@ import Activity from './Activity.js';
                 {this.state.showactivity &&  <Activity />
                 }
 
-
+</div>
       
                
     </div>
