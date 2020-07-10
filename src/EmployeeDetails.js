@@ -71,10 +71,10 @@ class Employeedetails extends Component{
 
  handleHoldConfirm = (Empid)=>{
   return(
-    <div>
-      <span>Are you Sure</span>
+    <div  className="alert alert-warning">
+      <span>Are you Sure   &nbsp;&nbsp;</span>
       <button className="button1" onClick={() => this.handleHold(Empid)}>hold</button>
-      <button  className="button1" onClick={() =>  this.setState({unholdbutton:""})}>cancel</button>
+      <button  className="button3" onClick={() =>  this.setState({unholdbutton:""})}>cancel</button>
                                                              
  </div>
 )  
@@ -95,11 +95,11 @@ class Employeedetails extends Component{
  handleUnholdConfirm = (Empid)=>{
   
   return(
-        <div>
-           <span>Are you Sure</span>
+       <div className="alert alert-warning" >
+           <span>Are you Sure     &nbsp;&nbsp;</span>
           <button  className="button1" onClick={() => this.handleUnHold(Empid)}>Unhold</button>
-          <button className="button1" onClick={() =>  this.setState({unholdbutton:""})}>cancel</button>
-     </div>
+          <button className="button3" onClick={() =>  this.setState({unholdbutton:""})}>cancel</button>
+    </div>
   )
   
 }
@@ -184,11 +184,16 @@ render(){
              
           </Navbar.Collapse>
         </Navbar> */}
-         <div >
+         <div style={{marginTop:"5px"}}>
                 <span id="div"></span>
               
                 <input  type="text" id="input" placeholder="Enter ID" className="mr-sm-2" />
-                <button  variant="outline-success sm" onClick ={(e) => this.handleSearch(document.getElementById("input").value)}>Search</button>
+                <button className="btn btn-secondary" variant="outline-success sm" onClick ={(e) => this.handleSearch(document.getElementById("input").value)}>Search</button>
+                {!this.state.changeButton  && <Button style={{marginLeft:"5px"}}variant="primary" className="mr-2" onClick={() => this.handleupdateClick()}>Update</Button> }
+                
+                {this.state.changeButton && <Button style={{marginLeft:"5px"}}variant="primary" className="mr-2" onClick={() => document.getElementById("submitbutton").click()}>Submit</Button> }
+     
+                {this.state.changeButton && <Button style={{marginLeft:"5px"}}variant="primary" className="mr-2" onClick={() => this.setState({changeButton:false})}>Cancel</Button> }
                
           </div> 
         <header className="headerApp">
@@ -224,7 +229,7 @@ render(){
                                            <td><b>Employee Mail :</b></td>
                                             <td>{this.state.Empdetails.EmpMail}</td>
                                        </tr>
-                                       <tr>
+                                       {/* <tr>
                                            <td><b>Date Of Join:</b></td>
                                             <td>{this.state.Empdetails.EmpMail}</td>
                                        </tr>
@@ -237,7 +242,7 @@ render(){
                                             {
                                                this.state.changeButton &&  <td><input type="date" required name="lastday"></input></td>
                                            }
-                                       </tr>
+                                       </tr> */}
                                        <tr>
                                            <td><b>Contact :</b></td>
                                             <td>{this.state.Empdetails.contact}</td>
@@ -276,6 +281,20 @@ render(){
                                         <td><b>Designation :</b></td>
                                           <td>{this.state.Empdetails.Designation}</td>
                                     </tr>
+                                    <tr>
+                                           <td><b>Date Of Join:</b></td>
+                                            <td>{this.state.Empdetails.EmpMail}</td>
+                                       </tr>
+                                       <tr>
+                                           <td><b>Release date :</b></td>
+                                           {
+                                               !this.state.changeButton && <td>{this.state.Empdetails.LWD}</td>
+                                           }
+                                          
+                                            {
+                                               this.state.changeButton &&  <td><input type="date" required name="lastday"></input></td>
+                                           }
+                                       </tr>
                                   
                                 </table>
 
@@ -316,11 +335,11 @@ render(){
        </div>
       {/* Update button  */}
              <div style={{margin:"0px"}}>    
-           {!this.state.changeButton  && <Button style={{marginTop:"0px"}}variant="primary" className="mr-2" onClick={() => this.handleupdateClick()}>Update</Button> }
+           {/* {!this.state.changeButton  && <Button style={{marginBottom:"5px"}}variant="primary" className="mr-2" onClick={() => this.handleupdateClick()}>Update</Button> }
                 
-           {this.state.changeButton && <Button variant="primary" className="mr-2" onClick={() => document.getElementById("submitbutton").click()}>Submit</Button> }
+           {this.state.changeButton && <Button style={{marginBottom:"5px"}}variant="primary" className="mr-2" onClick={() => document.getElementById("submitbutton").click()}>Submit</Button> }
 
-           {this.state.changeButton && <Button variant="primary" className="mr-2" onClick={() => this.setState({changeButton:false})}>Cancel</Button> }
+           {this.state.changeButton && <Button style={{marginBottom:"5px"}}variant="primary" className="mr-2" onClick={() => this.setState({changeButton:false})}>Cancel</Button> } */}
            <div id="HoldMessageDiv">
                           {this.state.unholdbutton}
                         

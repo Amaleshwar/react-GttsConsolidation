@@ -58,7 +58,7 @@ async handleQueue ( ){
                             <tr >
                                         <td style={{textAlign:"center"}} onClick={() => this.props.onClick(que.empid)}>{que.empid}</td>
                                         <td style={{textAlign:"center"}} onClick={() => this.props.onClick(que.empid)}>{que.empName}</td>
-                                        <td style={{textAlign:"center"}}> <button className="button1"  onClick={() => this.props.hold(que.empid)}>Hold</button></td>
+                                        <td style={{textAlign:"center"}}> <button className="button2"  onClick={() => this.props.hold(que.empid)}>Hold</button></td>
                             </tr>)}
                        </table>
 

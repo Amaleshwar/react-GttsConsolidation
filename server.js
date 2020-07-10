@@ -147,10 +147,11 @@ app.post('/addEmployee', function (req, res) {
 
 fs.writeFileSync(filePath,jsondata );
 
+
 var file_content = fs.readFileSync(filePath);
 var content = JSON.parse(file_content);
 console.log(content)
-
+InitiateProcess();
   res.send(filePath);
 
 

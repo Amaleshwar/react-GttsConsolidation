@@ -59,7 +59,7 @@ async componentWillReceiveProps(){
                             <tr >
                                         <td style={{textAlign:"center"}} onClick={() => this.props.onClick(que.empid)}>{que.empid}</td>
                                         <td style={{textAlign:"center"}} onClick={() => this.props.onClick(que.empid)}>{que.empName}</td>
-                                        <td style={{textAlign:"center"}}> <button className="button1"  onClick={() => this.props.unhold(que.empid)}>Unhold</button></td>
+                                        <td style={{textAlign:"center"}}> <button className="button2"  onClick={() => this.props.unhold(que.empid)}>Unhold</button></td>
                             </tr>)}
                        </table>
 

@@ -116,9 +116,9 @@ import axios from 'axios';
         //console.log("this.state.empdetails",this.state.empdetails)
   
     return (
-    <div className="App">
+    <div className="AppUpdatedeleteEmp">
       
-                 <div> <h5>update</h5>
+                 <div> 
                 <select id="getemp" className="dropdown__select" onChange={(e)=>this.onnameselect(e)} >
               <option class="placeholder">Select User</option>
                   { this.state.employeelist.map((emp,index)=>  <option className="select-option" value={emp}>{emp}</option> )}
@@ -135,7 +135,7 @@ import axios from 'axios';
                     }        
                     })} 
                                         <button className="empaddsubmit btn btn-primary" onClick={(e)=>this.updateemployee(e)}  >Update</button>
-                                        <button className="empaddsubmit btn btn-primary" onClick={(e)=> { if (window.confirm('Are you sure you wish to delete this Employee?')) this.deleteemployee(e)} }  >Delete</button>
+                                        <button className="empaddsubmit btn btn-danger" onClick={(e)=> { if (window.confirm('Are you sure you wish to delete this Employee?')) this.deleteemployee(e)} }  >Delete</button>
                       </div>}
                  </div>
 

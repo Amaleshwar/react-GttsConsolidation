@@ -33,7 +33,7 @@ export default class TableCom extends React.Component {
     
     render() {
     return (
-    <div>
+    <div className="AppTableCom">
     <table>
     <thead>
     <tr>{this.getHeader()}</tr>

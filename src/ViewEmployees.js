@@ -36,9 +36,9 @@ import TableCom from './tableCom.js';
       render(){
 
     return (
-    <div className="App">
+    <div className="AppViewEmployees">
       
-      <div style={{width:"500px",height:"500px",overflowX:"auto"}}>
+      <div  className="TableCom">
               {this.state.data && <TableCom data={this.state.data} />}
               </div>
 
