@@ -132,7 +132,7 @@ fs.writeFileSync(filePath,jsondata );
 
 var file_content = fs.readFileSync(filePath);
 var content = JSON.parse(file_content);
-//console.log(content)
+console.log(  content.timesheet.length )
 
   res.send(filePath);
 
@@ -209,6 +209,87 @@ app.post('/sendotp', function (req, res) {
     res.send("unable to send otp");
   }
 
+
+});
+
+//to 
+app.post('/updategttsemp', function (req, res) {
+
+  let filename = req.body.filename.trim();
+  let empname = req.body.empname.trim();
+  let action = req.body.action.trim();
+  let numDays =req.body.numDays.trim();
+  let weeks =req.body.weeks.trim();
+  let weekdays = req.body.weekdays.trim();
+  var dropoffLocation = '/MonthlyJsonFiles/';
+  var filePath = __dirname + dropoffLocation + filename + '.json';
+
+if(fs.existsSync(filePath)){
+  var file_content = fs.readFileSync(filePath);
+  var content = JSON.parse(file_content);
+  var timesheet = content.timesheet;
+  var leaves = content.leaves;
+if(action==='addemployee'){
+        var  timesheetrow = {}
+        var  leavesrow = {}
+        timesheetrow ["Sno"] = timesheet.length+1;
+        timesheetrow ["EmployeeName"] = empname;
+   
+         for(var j=1; j<=weeks;j++){
+          timesheetrow [`Week${j}TaskName`] = '';
+          timesheetrow [`Week${j}Totalhours`] = 0;
+         }
+         for(var x=1; x<=numDays;x++){
+          timesheetrow [`day${x}`] = 0;    //  days coloumn name
+         }          // emplist[empnames[i]] = timesheetrow
+         //end of time sheetrow
+
+        //start of leaves row
+        leavesrow ["Sno"] = leaves.length+1;
+        leavesrow ["EmployeeName"] = empname;
+        leavesrow ["TotalWorkingdays"] = weekdays;
+        leavesrow ["TotalHolidays"] = 0;
+        leavesrow ["TotalLeaves"] = 0;
+        leavesrow ["TotalFurLough"] = 0;
+        leavesrow ["TotalOptionalHolidays"] = 0;
+        leavesrow ["ActualWorkingdays"] = 0;
+        leavesrow ["Actualworkinghrs"] = 0;
+        leavesrow ["Entry"] = 'invalid';
+
+        timesheet.push(timesheetrow)
+        leaves.push(leavesrow)
+        }
+    if(action==='deleteemployee'){
+          var temptimesheet = timesheet;
+          var templeaves = leaves;
+
+          temptimesheet.map((emp,index)=>{ if(emp.EmployeeName === empname){ 
+                 delete temptimesheet[index-1];
+           }       
+           })
+           var timesheet= temptimesheet.filter((emp)=> emp !== null  )  
+
+           templeaves.map((emp,index)=>{ if(emp.EmployeeName === empname){ 
+            delete templeaves[index-1];
+            }       
+            })
+          var leaves= templeaves.filter((emp)=> emp !== null     )  
+
+      }
+        var tempfulljson = {};
+        Object.assign(tempfulljson, {"timesheet": timesheet})
+        Object.assign(tempfulljson, {"leaves": leaves})
+          console.log(tempfulljson);
+          console.log("Stringify",JSON.stringify(tempfulljson));
+         // console.log("Parse",JSON.parse(tempfulljson));
+         
+        fs.writeFileSync(filePath,JSON.stringify(tempfulljson) );
+
+        res.send("Details Updated");
+}
+else{
+  res.send("File not Created");
+}
 
 });
 

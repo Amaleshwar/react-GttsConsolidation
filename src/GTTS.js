@@ -63,9 +63,9 @@ var fs = require('fs');
         selected:null,
         activityname:'',
         empname:'',
-        employeelist:    this.props.employeelist, 
+        employeelist:    [], 
         username:  this.props.username,
-        activitylist:  this.props.activitieslist, // ['activity1','activity2','activity3']   , 
+        activitylist:  [], // ['activity1','activity2','activity3']   , 
         holidaystoggle: false,  
         filename:'',
         datatosheetjs:[],
@@ -94,6 +94,35 @@ var fs = require('fs');
     
 
     componentDidMount(){
+
+      var getempdataresult;
+      let formdata =new FormData();  
+      formdata.append('filename',"EmployeeData");
+      axios.post("http://localhost:8002/getempdata",formdata)
+          .then(res=>{  
+            getempdataresult=   res.data;
+         //   console.log("status text",res.data);
+           // console.log("data from file text",getempdataresult.Activity);
+          
+          var EmployeeList=[];
+          var ActivityList=[];
+          getempdataresult.Activity.map((act)=>{
+              ActivityList.push(act);
+          });
+          getempdataresult.Employee.map((emp)=>{
+            EmployeeList.push(emp.EmpFirstName);
+
+        });
+            this.setState({activitylist:ActivityList,employeelist:EmployeeList},()=>{
+              this.dataprocess();
+            });
+
+          })
+ 
+
+    }
+    dataprocess = function(){
+      
       const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
@@ -226,9 +255,6 @@ var presentweekno=0;
            if(weekend===day.id) { console.log(weekend); presentweekends.push(day) } 
            
           })
-           
-        
-         
 
        })
        console.log("weekends in present week :",presentweekends,weekends)
@@ -247,9 +273,6 @@ var presentweekno=0;
 
   })
 
-
-
-   
     }
   
 
@@ -869,8 +892,7 @@ exportFile() {
 
  
       render(){
-        console.log("this.props.employeelist",this.props.employeelist);
-        console.log("this.props.username",this.props.username)
+     
   
     return (
     <div className="App">

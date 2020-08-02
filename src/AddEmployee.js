@@ -115,6 +115,7 @@ import axios from 'axios';
             result=   res.data;
             console.log("status text",res.statusText);
             if(res.statusText==="OK"){
+               this.updateGtts(EmpFirstName);
                document.getElementById("EmpId").value ='';
                document.getElementById("EmpFirstName").value='';
                document.getElementById("EmpLastName").value='';
@@ -131,6 +132,68 @@ import axios from 'axios';
         }
 
     }
+    updateGtts = (EmpFirstName)=> {
+
+      let formdata =new FormData();  
+      var result;
+      var  date = new Date();
+      var   persentYear = date.getFullYear();
+      var persentMonth = date.getMonth();
+      var filename = persentYear+''+(persentMonth+1);
+      var lastDate = new Date(persentYear, persentMonth + 1, 0);
+      var numDays = lastDate.getDate();
+      var firstDate = new Date(persentYear, persentMonth, 1);
+      var weeks=  this.getWeeksStartAndEndInMonth('monday',firstDate,numDays);
+      var weekdays = this.getWeekdaysInMonth(persentYear,persentMonth,numDays);
+      formdata.append('filename',filename);
+      formdata.append('empname',EmpFirstName);
+      formdata.append('action','addemployee');
+      formdata.append('numDays',numDays);
+      formdata.append('weeks',weeks.length);
+      formdata.append('weekdays',weekdays.length);
+
+      axios.post("http://localhost:8002/updategttsemp",formdata)
+          .then(res=>{  
+            result=   res.data;
+            console.log("status text",res.statusText);
+          })
+
+    }
+    getWeekdaysInMonth = function(persentYear,persentMonth,numDays) {
+      let weekdays = [];
+    for(var i=1;i<=numDays;i++){    //looping through days in month
+      var newDate = new Date(persentYear,persentMonth,i)
+      if(newDate.getDay()!==0 && newDate.getDay()!==6){   //if not Sunday and saturday
+        weekdays.push(i);
+      }
+     }
+      return weekdays;
+    }
+  
+   getWeeksStartAndEndInMonth = function(_start,firstDate,numDays) {
+    let weeks = [];
+ 
+    let start = 1;
+    let end = 7 - firstDate.getDay();
+    if (_start === 'monday') {
+        if (firstDate.getDay() === 0) {
+            end = 1;
+        } else {
+            end = 7 - firstDate.getDay() + 1;
+        }
+    }
+    while (start <= numDays) {
+        weeks.push({start: start, end: end});
+        start = end + 1;
+        end = end + 7;
+        end = start === 1 && end === 8 ? 1 : end;
+        if (end > numDays) {
+            end = numDays;
+        }
+    }
+  
+    return weeks;
+}
 
     handleinpt(e,id){
       var errorloop =this.state.errorslist;
