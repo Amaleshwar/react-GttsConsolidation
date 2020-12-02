@@ -4,6 +4,7 @@ import React from 'react';
 import loginimg from './images/login-img.jpg';
 import './Login.css';
 import axios from 'axios';
+import { errorMonitor } from 'nodemailer/lib/mailer';
 
 export default class Login extends React.Component {
     constructor(props) {
@@ -14,7 +15,7 @@ export default class Login extends React.Component {
                         EmpEmailList:{},
                         Otp:null,
                         resendotpbtn: false,
-                        activities:[],
+                        empdetails:[]
                     }
          }
                
@@ -32,19 +33,15 @@ export default class Login extends React.Component {
 
             var EmployeeList=[];
             var EmpEmailList={};
-            var ActivityList=[];
             result.Employee.map((emp)=>{
                 EmployeeList.push(emp.EmpFirstName);
                 EmpEmailList[emp.EmpFirstName]=emp.EmpMail;
 
             });
-            result.Activity.map((act)=>{
-                ActivityList.push(act);
-            });
             console.log("EmployeeList",EmployeeList);
             console.log("EmpEmailList",EmpEmailList);
-            console.log("EmpEmailList",ActivityList);
-              this.setState({EmployeeList:EmployeeList,EmpEmailList:EmpEmailList,activities:ActivityList});
+           // console.log("EmpEmailList",ActivityList);
+              this.setState({EmployeeList:EmployeeList,EmpEmailList:EmpEmailList,empdetails:result.Employee});
 
             })
 
@@ -60,7 +57,11 @@ export default class Login extends React.Component {
           //  console.log("otp",parseInt(password),this.state.Otp)
             if(this.state.Otp===parseInt(password)){  
                 sessionStorage.setItem("loaded",true)
-                this.sendData(username);
+                var designation;
+                this.state.empdetails.map((emp)=>{
+                   if(emp.EmpFirstName===username){ designation = emp.Designation}
+                });
+                this.sendData(username,designation);
                 this.setState({errormsg:''})
             }
             else
@@ -109,10 +110,10 @@ export default class Login extends React.Component {
         
     
     }
-    sendData = (username) => {
-        console.log("sending to app.js",this.state.EmployeeList)
-        console.log("sending to app.js",JSON.stringify (this.state.EmployeeList))
-        this.props.parentCallback("true",username,this.state.EmployeeList,this.state.activities);
+    sendData = (username,designation) => {
+      //  console.log("sending to app.js",this.state.EmployeeList)
+        //console.log("sending to app.js",JSON.stringify (this.state.EmployeeList))
+        this.props.parentCallback("true",username,designation);
         console.log("to_parent",username)
       }
 

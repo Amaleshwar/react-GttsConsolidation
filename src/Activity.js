@@ -11,6 +11,7 @@ import axios from 'axios';
                   activitydetails:[],
                   empdetails:[],
                   viewupdate:false,
+                  errormsg:false,
  
        }
        
@@ -39,19 +40,21 @@ import axios from 'axios';
 
 
     addactivity(){
-            var newact = document.getElementById("newactivity").value;
-            if(newact===''){
-                
-            }
-            else{
-                var res = this.state.activitydetails
-                res.push(newact);
-                this.setState({activitydetails:res},()=>{
-                    this.addtofile();
-                })
-            }
+      var newact = document.getElementById("newactivity").value;
+      if(newact===''){
+        this.setState({errormsg:true})
+      }
 
-    }
+      else{
+          var res = this.state.activitydetails
+          res.push(newact);
+          this.setState({activitydetails:res,errormsg:false},()=>{
+              this.addtofile();
+              document.getElementById("newactivity").value='';
+          })
+      }
+
+}
     removeactivity(e,act){
         var activities = this.state.activitydetails
         var newactivities =   activities.filter((res)=> res!==act  )
@@ -74,24 +77,33 @@ import axios from 'axios';
             
             })
     }
+    handleaddactivity(e){
+        if(e.target.value===''){
+          this.setState({errormsg:true})
+        }
+        else{
+            this.setState({errormsg:false})
+        }
+    }
 
 
       render(){
   
   
     return (
-    <div className="App">
-
-                  <div> <h5>add</h5>
-
-                      
+    <div >
+      <tr><td> <input type="text" id="newactivity" autocomplete="off" onChange={(e)=>this.handleaddactivity(e)} placeholder="Add new Activity" /> </td> <td> <button className="activityadd btn btn-primary" onClick={(e)=>this.addactivity(e)}  >Add</button></td> </tr>
+                
+      {this.state.errormsg && <span className="alert alert-danger" role="alert" > Can't add Empty Activity</span>}  
+        <div className="AppActivity"> 
+                    
                       <table>
+                        
                           <thead>
-                          <tr><td> <input type="text" id="newactivity" placeholder="Add new Activity" /> </td> <td> <button className="empaddsubmit btn btn-primary" onClick={(e)=>this.addactivity(e)}  >Add</button></td> </tr>
                               <tr> <th>Activity</th><th>Action</th></tr>
                         </thead>
                         <tbody>
-                      {this.state.activitydetails.map((act)=>{ return <tr><td> {act} </td> <td> <button className="viewall btn btn-secondary" onClick={(e)=>{ if (window.confirm('Are you sure you wish to remove this Activity?'))  this.removeactivity(e,act)}}  >Remove</button></td> </tr>} )}
+                      {this.state.activitydetails.map((act)=>{ return <tr><td> {act} </td> <td> <button className="viewall btn btn-danger" onClick={(e)=>{ if (window.confirm('Are you sure you wish to remove this Activity?'))  this.removeactivity(e,act)}}  >Remove</button></td> </tr>} )}
                       </tbody>
                       </table>
                  </div>
