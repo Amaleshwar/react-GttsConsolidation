@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
-import './App.css';
+import './UpdateEmployee.css';
 import axios from 'axios';
 import AddEmployee from './AddEmployee.js';
 import UpdatedeleteEmp from './UpdatedeleteEmp.js';
@@ -49,15 +49,13 @@ import Activity from './Activity.js';
       render(){
        
     return (
-    <div className="App">
+    <div className="AppUpdateEmployee">
       
-                <h1>Update Employee </h1>
-
-                <button className="add btn btn-secondary" onClick={(e)=>this.handleadd(e)}  >Add</button>
-                <button className="update btn btn-secondary" onClick={(e)=>this.handleupdate(e)}  >Update/Delete</button>
-                <button className="viewall btn btn-secondary" onClick={(e)=>this.handleview(e)}  >View All</button>
-                <button className="viewall btn btn-secondary" onClick={(e)=>this.handleactivity(e)}  >Activity</button>
-
+                <button className="addempbtn btn btn-secondary" onClick={(e)=>this.handleadd(e)}  >Add</button>
+                <button className="updateempbtn btn btn-secondary" onClick={(e)=>this.handleupdate(e)}  >Update/Delete</button>
+                <button className="viewallbtn btn btn-secondary" onClick={(e)=>this.handleview(e)}  >View All</button>
+                <button className="activitybtn btn btn-secondary" onClick={(e)=>this.handleactivity(e)}  >Activity</button>
+    <div className="updatecomponets ">
                 {this.state.showadd && 
                   <AddEmployee />
                 }
@@ -70,7 +68,7 @@ import Activity from './Activity.js';
                 {this.state.showactivity &&  <Activity />
                 }
 
-
+</div>
       
                
     </div>

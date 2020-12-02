@@ -14,13 +14,13 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
-     this.state = { Loggedin: sessionStorage.getItem('state') ? JSON.parse(sessionStorage.getItem('state')).Loggedin : false,
-   // this.state = { Loggedin: true,
+   //  this.state = { Loggedin: sessionStorage.getItem('state') ? JSON.parse(sessionStorage.getItem('state')).Loggedin : false,
+    this.state = { Loggedin: true,
                     temp:null,
-                    CurComp: <EmployeeDetails />,
+                    CurComp:<EmployeeDetails />,
                     user_name: sessionStorage.getItem('state') ? JSON.parse(sessionStorage.getItem('state')).user_name : false,
-                    Employee_List: sessionStorage.getItem('state') ? JSON.parse(sessionStorage.getItem('state')).Employee_List : [],
-                    activities_list: sessionStorage.getItem('state') ? JSON.parse(sessionStorage.getItem('state')).activities_list :  [],
+                  //  UserDesignation: sessionStorage.getItem('state') ? JSON.parse(sessionStorage.getItem('state')).UserDesignation : '',
+                    UserDesignation: 'Manager',
                   }
   }
 
@@ -46,15 +46,15 @@ componentWillUnmount() {
   this.setState({ Loggedin: false })
  }
 
- callbackFunction = (childData,username,EmployeeList,activities) => {
+ callbackFunction = (childData,username,designation) => {
   if( childData ==='true' ){
-  this.setState({ Loggedin: childData,user_name: username,Employee_List:EmployeeList,activities_list:activities })
+  this.setState({ Loggedin: childData,user_name: username,UserDesignation:designation})
   this.onUnload();
   // console.log("EmployeeList in app.js "+ EmployeeList[0]);
   // var str = EmployeeList.toString();
   // var arr =[]
   // arr =str.split(',')
-  // console.log("EmployeeList split "+arr[0]);
+   console.log("UserDesignationEmployeeList split ", designation);
 
 
   }
@@ -71,6 +71,7 @@ render(){
   return (
     <div>
     <div className="App" id="appid" >
+
       <header className="App-header">
       <img src={logo} className="App-logo" alt="logo" />
         <h2 className="header-Text"> GTTS Consolidation <br/></h2>
@@ -79,17 +80,22 @@ render(){
   {this.state.Loggedin &&  <button  id="submit" className="Logout" value="Login" onClick={() => this.Logout()}>Logout </button>} 
   
       </header>
-  {this.state.Loggedin &&   <div className="Menu">  
-          
-          <div className="menu-link" id="0" onClick={(e)=>this.menuchange(<GTTS employeelist={this.state.Employee_List} username={this.state.user_name} activitieslist={this.state.activities_list}/>,0,e)}> GTTS</div>
+
+
+
+  {this.state.Loggedin &&   
+  <div className="Menu" style={{display: this.state.UserDesignation ==='Manager' || this.state.UserDesignation ==='Delivery Manager'? 'set' :'none'}}>          
+          <div className="menu-link" id="0" onClick={(e)=>this.menuchange(<GTTS  username={this.state.user_name} />,0,e)}> GTTS</div>
           <div className="menu-link" id="1" onClick={(e)=>this.menuchange(<EmployeeDetails />,1,e)}> Employee Details</div>
           <div className="menu-link" id="2" onClick={(e)=>this.menuchange(<UpdateEmployee />,2,e)}> Update Employee</div>
+       </div>       }
 
-       </div>}
       {/* Ternary operator */}
 
 {this.state.Loggedin ? <div  className="App-body"> 
-  {this.state.CurComp} </div> :
+     { this.state.UserDesignation ==='Manager' || this.state.UserDesignation ==='Delivery Manager' ? this.state.CurComp :       <GTTS  username={this.state.user_name} /> }
+
+</div> :
    <div  className="App-login-body"><Login parentCallback = {this.callbackFunction}/>   </div> }
     </div>
     </div>

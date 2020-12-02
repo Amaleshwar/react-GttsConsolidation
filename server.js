@@ -6,7 +6,8 @@ var cors = require('cors');
 app.use(cors());
 var path = require('path');
 var fs = require('fs');
-
+var bodyParser = require('body-parser');
+app.use(bodyParser.json());
 var sql = require("mssql");
 var nodemailer = require('nodemailer');
 // require('https').globalAgent.options.ca = require('ssl-root-cas/latest').create();
@@ -77,7 +78,7 @@ app.post('/checkfileexists', function (req, res) {
   var dropoffLocation = '/MonthlyJsonFiles/';
   var filePath = __dirname + dropoffLocation + filename + '.json';
   console.log(filePath)
-  console.log(fs.existsSync(filePath));
+  //console.log(fs.existsSync(filePath));
   res.send(fs.existsSync(filePath));
 });
 
@@ -92,7 +93,7 @@ fs.writeFileSync(filePath,jsondata );
 
 var file_content = fs.readFileSync(filePath);
 var content = JSON.parse(file_content);
-console.log(content)
+//console.log(content)
 
   res.send(filePath);
 
@@ -109,11 +110,11 @@ app.post('/getjsondata', function (req, res) {
     var jsondata = fs.readFileSync(filePath);
    
      //chatdata = chatdata.toString().replace(/,\s*$/, "");
-     console.log("filename ", jsondata)
+     //console.log("filename ", jsondata)
      res.send( jsondata );
   }
   catch{
-    console.log("empty")
+    //console.log("empty")
    res.send( jsondata );
   }
 
@@ -131,7 +132,7 @@ fs.writeFileSync(filePath,jsondata );
 
 var file_content = fs.readFileSync(filePath);
 var content = JSON.parse(file_content);
-console.log(content)
+console.log(  content.timesheet.length )
 
   res.send(filePath);
 
@@ -146,10 +147,11 @@ app.post('/addEmployee', function (req, res) {
 
 fs.writeFileSync(filePath,jsondata );
 
+
 var file_content = fs.readFileSync(filePath);
 var content = JSON.parse(file_content);
 console.log(content)
-
+InitiateProcess();
   res.send(filePath);
 
 
@@ -209,6 +211,323 @@ app.post('/sendotp', function (req, res) {
 
 
 });
+
+//to 
+app.post('/updategttsemp', function (req, res) {
+
+  let filename = req.body.filename.trim();
+  let empname = req.body.empname.trim();
+  let action = req.body.action.trim();
+  let numDays =req.body.numDays.trim();
+  let weeks =req.body.weeks.trim();
+  let weekdays = req.body.weekdays.trim();
+  var dropoffLocation = '/MonthlyJsonFiles/';
+  var filePath = __dirname + dropoffLocation + filename + '.json';
+
+if(fs.existsSync(filePath)){
+  var file_content = fs.readFileSync(filePath);
+  var content = JSON.parse(file_content);
+  var timesheet = content.timesheet;
+  var leaves = content.leaves;
+if(action==='addemployee'){
+        var  timesheetrow = {}
+        var  leavesrow = {}
+        timesheetrow ["Sno"] = timesheet.length+1;
+        timesheetrow ["EmployeeName"] = empname;
+   
+         for(var j=1; j<=weeks;j++){
+          timesheetrow [`Week${j}TaskName`] = '';
+          timesheetrow [`Week${j}Totalhours`] = 0;
+         }
+         for(var x=1; x<=numDays;x++){
+          timesheetrow [`day${x}`] = 0;    //  days coloumn name
+         }          // emplist[empnames[i]] = timesheetrow
+         //end of time sheetrow
+
+        //start of leaves row
+        leavesrow ["Sno"] = leaves.length+1;
+        leavesrow ["EmployeeName"] = empname;
+        leavesrow ["TotalWorkingdays"] = weekdays;
+        leavesrow ["TotalHolidays"] = 0;
+        leavesrow ["TotalLeaves"] = 0;
+        leavesrow ["TotalFurLough"] = 0;
+        leavesrow ["TotalOptionalHolidays"] = 0;
+        leavesrow ["ActualWorkingdays"] = 0;
+        leavesrow ["Actualworkinghrs"] = 0;
+        leavesrow ["Entry"] = 'invalid';
+
+        timesheet.push(timesheetrow)
+        leaves.push(leavesrow)
+        }
+    if(action==='deleteemployee'){
+          var temptimesheet = timesheet;
+          var templeaves = leaves;
+
+          temptimesheet.map((emp,index)=>{ if(emp.EmployeeName === empname){ 
+                 delete temptimesheet[index-1];
+           }       
+           })
+           var timesheet= temptimesheet.filter((emp)=> emp !== null  )  
+
+           templeaves.map((emp,index)=>{ if(emp.EmployeeName === empname){ 
+            delete templeaves[index-1];
+            }       
+            })
+          var leaves= templeaves.filter((emp)=> emp !== null     )  
+
+      }
+        var tempfulljson = {};
+        Object.assign(tempfulljson, {"timesheet": timesheet})
+        Object.assign(tempfulljson, {"leaves": leaves})
+          console.log(tempfulljson);
+          console.log("Stringify",JSON.stringify(tempfulljson));
+         // console.log("Parse",JSON.parse(tempfulljson));
+         
+        fs.writeFileSync(filePath,JSON.stringify(tempfulljson) );
+
+        res.send("Details Updated");
+}
+else{
+  res.send("File not Created");
+}
+
+});
+
+
+//Employee details ========================================================================================
+//============================================================================================================
+
+let holdArray = [];
+let ERDlist = [];
+let dummieERDlist = [];
+let queue = [];
+const date = new Date();
+
+
+
+
+
+//this function executes when server starts
+InitiateProcess();
+app.get("/",(req,res) => {
+  
+     console.log("Initiating");
+     
+})
+
+function InitiateProcess() {
+
+    let Employeedetails = require("./Files/EmployeeData.json");
+   // //console.log(Employeedetails);
+    
+    holdArray = [];
+    ERDlist = [];
+    dummieERDlist = [];
+    queue = [];
+
+    Employeedetails.Employee.map(Emp => {
+         
+        const ERD = new Date(Emp.LWD);//ERD- Employee Release Date
+        const presentDate = new Date();
+       
+        if(ERD > presentDate){
+
+                    let obj = {
+                                empid : Emp.EmpId,
+                                LWD : ERD,
+                                empName: Emp.EmpNmae,
+                                EmpMail : Emp.EmpMail,
+                            }
+
+                    if(Emp.Hold){
+                    
+                        holdArray.push(obj)
+
+                    }else{
+
+                        // makking an array of Employees Release dates
+                            ERDlist.push(obj);
+                            dummieERDlist.push(obj);
+                    }
+        }
+    })
+
+    //sorting the ERDList(array) according to latest release date(Ascending order)
+     queue =  dummieERDlist.sort((a,b) => a.LWD - b.LWD);
+
+     //calling Handlesendmail function
+     handleSendMail();
+
+
+}
+
+
+function handleSendMail(){
+
+    const presentdate = date.toLocaleDateString();
+    const presentdateInMilliSeconds = Date.parse(presentdate);
+
+    let threeDaysInMilliseconds = -259200000;
+
+    if(queue.length > 0 ){
+
+        const LWD  = queue[0].LWD;
+        const LwdInMilliSeconds = Date.parse(LWD);
+   
+       timeout = ((LwdInMilliSeconds - 259200000) - presentdateInMilliSeconds);
+        //triggering mails
+   
+
+        if(timeout > 0 ){
+
+                    var trigger = setTimeout(() => {
+
+                                        var mailOptions = {
+                                            from: 'mail2giridharsai@gmail.com',
+                                            to: queue[0].EmpMail,
+                                            subject: 'Sending Email using Node.js',
+                                            html: '<h1>Welcome</h1><p>That was'+queue[0].empName+' easy!</p>'
+                                        };
+                                        
+                                        transporter.sendMail(mailOptions, function(error, info){
+                                            if (error) {
+                                            //console.log(error);
+                                            } else {
+                                            //console.log('Email sent: ' + info.response);
+                                            }
+                                        });
+                        
+                                        queue.shift();
+                                        handleSendMail(); 
+                                    }, timeout);
+
+        }else if( parseInt(threeDaysInMilliseconds) < parseInt(timeout) && parseInt(timeout) <= 0) {
+            
+                var mailOptions = {
+                    from: 'mail2giridharsai@gmail.com',
+                    to: queue[0].EmpMail,
+                    subject: 'testing',
+                    html: '<h6>Hi All</h6><p>Our team mate <b>'+queue[0].empName+'</b> is going to release on '+LWD.toDateString()+' make sure we get a party before '+LWD+' from him/her</p>'
+                  };
+                  
+                  transporter.sendMail(mailOptions, function(error, info){
+                    if (error) {
+                      //console.log(error);
+                    } else {
+                      //console.log('Email sent: ' + info.response);
+                    }
+                  });
+            
+            queue.shift();
+            handleSendMail();
+            
+        }else{
+            
+        }
+
+    }else{
+    }
+
+}
+
+app.post("/EployeedatatList" , (req,res) => {
+
+    let Employeedetails = require("./Files/EmployeeData.json");
+    //console.log(req);
+    
+    let Emp =  Employeedetails.Employee.filter(emp => {return emp.EmpId === req.body.EmpId})
+    res.send(Emp)
+
+})
+
+//Hold Employees from queue
+app.post('/HoldEmp', (req,res) => {
+//console.log(req.body)
+    let Employeedetails = require("./Files/EmployeeData.json");
+
+    Employeedetails.Employee.map(Emp => {
+        if(Emp.EmpId === req.body.id.trim())
+        {
+            Emp.Hold = true;
+            fs.writeFileSync("./Files/EmployeeData.json",JSON.stringify(Employeedetails));
+            InitiateProcess();
+            
+        }
+    })
+    //console.log(holdArray);
+    
+    res.send(holdArray)
+
+})
+
+//UnHold Employees from queue
+app.post('/UnHoldEmp', (req,res) => {
+
+    let Employeedetails = require("./Files/EmployeeData.json");
+
+    //console.log(Employeedetails)
+
+    Employeedetails.Employee.map(Emp => {
+        if(Emp.EmpId === req.body.id)
+        {
+            Emp.Hold = false;
+            fs.writeFileSync("./Files/EmployeeData.json",JSON.stringify(Employeedetails));
+            InitiateProcess();
+            
+        }
+    })
+    //console.log(holdArray);
+    
+    res.send(holdArray)
+
+})
+
+//Add details to queue.
+app.post('/Addqueue' , (req,res) => {
+    //console.log(req.body);
+
+    let Employeedetails = require("./Files/EmployeeData.json");
+
+    Employeedetails.Employee.map(Emp => {
+            if(Emp.EmpId === req.body.EmployeId)
+            {
+                const EmpLWWD = req.body.lastday;
+                Emp.LWD = EmpLWWD;
+                fs.writeFileSync("./Files/EmployeeData.json",JSON.stringify(Employeedetails));
+                //console.log("inside details");
+                
+            }
+        })
+        //console.log(Employeedetails);
+        
+        let employee = Employeedetails.Employee.filter(emp => {return emp.EmpId === req.body.EmployeId})
+        InitiateProcess();;
+        res.send({Employee:employee});
+      
+
+    // }else{
+    //     res.send("error");
+    // }
+
+   
+
+})
+
+//axios get queue(release dates)
+app.get('/Addqueue' , (req,res) => {
+
+    res.send(queue);
+
+})
+
+//get Hold employees
+app.get('/getHoldArray',(req,res) => {
+    res.send(holdArray);
+})
+
+
+//end Employee detail=================================================
+//===================
 
 app.listen(8002, function () {
   console.log('App running on port 8002');
